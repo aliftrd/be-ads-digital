@@ -1,0 +1,36 @@
+{
+  "name": "be-ads-digital",
+  "version": "0.0.1",
+  "description": "ADS Digital - Backend Engineer MSIB TEST",
+  "author": "https://github.com/aliftrd",
+  "private": "true",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start:dev": "nodemon ./src/index.ts",
+    "start:prod": "npx ts-node ./src/server.ts",
+    "db:gen": "drizzle-kit generate",
+    "db:migrate": "npx ts-node ./src/migrate.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.33.0",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "nodemon": "^3.1.4",
+    "postgres": "^3.4.4",
+    "radash": "^12.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.5.0",
+    "@typescript-eslint/eslint-plugin": "^8.2.0",
+    "@typescript-eslint/parser": "^8.2.0",
+    "drizzle-kit": "^0.24.1",
+    "eslint": "^9.9.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.3.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}
