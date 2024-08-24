@@ -4,12 +4,26 @@ import HTTPException from './../utils/exception/http.exception';
 import { InsertProducts, products } from './../schema';
 import { eq } from 'drizzle-orm';
 
-export async function findAll() {
-  const [err, products] = await tryit(async () =>
-    db.query.products.findMany(),
+export async function findAll(price: string = 'asc') {
+  const [err, products] = await tryit(
+    async () =>
+      await db.query.products.findMany({
+        orderBy: (products, { asc, desc }) => [
+          price === 'asc' ? asc(products.price) : desc(products.price),
+        ],
+        columns: {
+          id: true,
+          name: true,
+          slug: true,
+          price: true,
+        },
+        with: { category: true, product_assets: true },
+      }),
   )();
 
   if (err) {
+    console.log(err);
+
     throw new HTTPException(500, 'failed to find all products');
   }
 

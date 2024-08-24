@@ -19,3 +19,7 @@ export type Update = z.infer<typeof update>;
 export const idParam = z.object({
   id: z.coerce.number().int(),
 });
+
+export const sortByPrice = z.object({
+  price: z.enum(['asc', 'desc']).optional().default('asc'),
+});

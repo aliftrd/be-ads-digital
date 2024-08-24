@@ -3,8 +3,8 @@ import * as ProductSchema from './product.schema';
 import { kebabCase } from 'lodash';
 import { nanoid } from 'nanoid';
 
-export async function get() {
-  const products = await ProductRepository.findAll();
+export async function get(price?: string) {
+  const products = await ProductRepository.findAll(price);
 
   return { data: products };
 }

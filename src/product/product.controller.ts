@@ -4,11 +4,16 @@ import * as ProductService from './product.service';
 import * as ProductSchema from './product.schema';
 const product = Router();
 
-product.get('/product', async (req: Request, res: Response) => {
-  const resp = await ProductService.get();
+product.get(
+  '/product',
+  validate('query', ProductSchema.sortByPrice),
+  async (req: Request, res: Response) => {
+    const { price } = req.query;
+    const resp = await ProductService.get(price as string);
 
-  return res.json(resp);
-});
+    return res.json(resp);
+  },
+);
 
 product.post(
   '/product',

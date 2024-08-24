@@ -4,6 +4,8 @@ import HTTPException from './utils/exception/http.exception';
 
 export type ValidationTargets = {
   json: any;
+  form: Record<string, string | File>;
+  query: Record<string, string | string[]>;
   param: Record<string, string> | Record<string, string | undefined>;
 };
 
@@ -12,18 +14,43 @@ export const validate = <T>(
   schema: ZodSchema<T>,
 ) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const result = schema.safeParse(type == 'param' ? req.params : req.body);
+    let data;
 
-    if (!result.success) {
-      const errors = result.error.issues.map((err) => {
-        const key = err.path[err.path.length - 1];
-        return { [key]: err.message };
-      });
-
-      throw new HTTPException(400, 'validator error', errors);
+    if (type === 'param') {
+      data = req.params;
+    } else if (type === 'form') {
+      data = {
+        ...req.body,
+        file: req.file,
+      };
+    } else if (type === 'query') {
+      data = req.query;
+    } else {
+      data = req.body;
     }
 
-    if (type === 'json') {
+    const result = schema.safeParse(data);
+
+    if (!result.success) {
+      const errorMap: Record<string, string> = {};
+
+      result.error.issues.forEach((err) => {
+        const key = err.path[err.path.length - 1];
+        if (!errorMap[key]) {
+          errorMap[key] = err.message;
+        }
+      });
+
+      const formattedErrors = Object.entries(errorMap).map(
+        ([key, message]) => ({
+          [key]: message,
+        }),
+      );
+
+      throw new HTTPException(400, 'validator error', formattedErrors);
+    }
+
+    if (type === 'json' || type === 'form') {
       req.body = result.data;
     }
 

@@ -31,12 +31,34 @@ export const products = pgTable('products', {
   category_id: integer('category_id').notNull(),
 });
 
-export const productsRelations = relations(products, ({ one }) => ({
+export const productsRelations = relations(products, ({ one, many }) => ({
   category: one(categories, {
     fields: [products.category_id],
     references: [categories.id],
   }),
+  product_assets: many(productAssets),
 }));
 
 export type SelectProducts = typeof products.$inferSelect;
 export type InsertProducts = typeof products.$inferInsert;
+
+/********** SCHEMA **********
+ * @Table product_assets
+ * @PrimaryKey id
+ * @Fields id, product_id, image
+ */
+export const productAssets = pgTable('product_assets', {
+  id: serial('id').primaryKey(),
+  product_id: integer('product_id').notNull(),
+  image: varchar('image').notNull(),
+});
+
+export const productAssetsRelations = relations(productAssets, ({ one }) => ({
+  product: one(products, {
+    fields: [productAssets.product_id],
+    references: [products.id],
+  }),
+}));
+
+export type SelectProductAssets = typeof productAssets.$inferSelect;
+export type InsertProductAssets = typeof productAssets.$inferInsert;
